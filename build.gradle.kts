@@ -6,5 +6,6 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform).apply(false)
     alias(libs.plugins.kotlinCocoapods).apply(false)
 
-    id("com.google.dagger.hilt.android") version "2.44" apply false
+    alias(libs.plugins.hilt).apply(false)
+
 }

@@ -10,7 +10,7 @@ kotlinx-serialization = "1.6.3"
 kotlinx-datetime = "0.6.0-RC.2"
 ktor = "2.3.9"
 sqldelight = "2.0.1"
-hilt = "2.51"
+hiltAndroid = "2.44"
 
 
 [libraries]
@@ -36,8 +36,8 @@ sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", ver
 sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight"}
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight"}
 
-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt"}
-hilt-gradle = { module = "'com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt"}
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
 
 
 [plugins]
@@ -49,4 +49,5 @@ kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = 
 
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight"}
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid"}
 

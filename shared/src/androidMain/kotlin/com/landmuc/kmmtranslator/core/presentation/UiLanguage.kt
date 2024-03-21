@@ -5,7 +5,7 @@ import com.landmuc.kmmtranslator.R
 import com.landmuc.kmmtranslator.core.domain.language.Language
 import java.util.Locale
 
-class UiLanguage(
+actual class UiLanguage(
     @DrawableRes val drawableRes: Int,
     actual val language: Language
 ) {

@@ -55,6 +55,7 @@ class TranslateViewModel(
             ).toCommonStateFlow()
         }
     }
+
     private var translateJob: Job? = null
 
     fun onEvent(event: TranslateEvent) {

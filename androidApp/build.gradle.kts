@@ -49,8 +49,11 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     debugImplementation(libs.compose.ui.tooling)
 
+    implementation(libs.androidx.material)
+
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+
 }
 
 kapt {

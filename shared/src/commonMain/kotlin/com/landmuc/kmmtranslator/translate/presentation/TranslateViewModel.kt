@@ -11,12 +11,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
@@ -30,49 +27,22 @@ class TranslateViewModel(
     private val viewModelScope = coroutineScope ?: CoroutineScope(Dispatchers.Main)
 
     private val _state = MutableStateFlow(TranslateState())
-    val state = _state.asStateFlow().toCommonStateFlow()
-
-
-//    lateinit var stateTest: StateFlow<TranslateState>
-//        private set
-//
-//    init {
-//        viewModelScope.launch {
-//            stateTest = combine(
-//                _state,
-//                historyDataSource.getHistory()
-//            ) { state, history ->
-//                if (state.history != history) {
-//                    state.copy(
-//                        history = history.mapNotNull { item ->
-//                            UiHistoryItem(
-//                                id = item.id ?: return@mapNotNull null,
-//                                fromText = item.fromText,
-//                                toText =  item.toText,
-//                                fromLanguage = UiLanguage.byCode(item.fromLanguageCode),
-//                                toLanguage = UiLanguage.byCode(item.toLanguageCode)
-//                            )
-//                        }
-//                    )
-//                } else state
-//            }.stateIn(
-//                scope = viewModelScope,
-//                started = SharingStarted.WhileSubscribed(5000),
-//                initialValue = TranslateState()
-//            ).toCommonStateFlow()
-//        }
-//    }
+    val state = _state.asStateFlow().toCommonStateFlow().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = TranslateState()
+    )
 
     private var translateJob: Job? = null
+    private var historyListJob: Job? = null
 
     fun onEvent(event: TranslateEvent) {
         when(event) {
             is TranslateEvent.ChangeTranslationText -> {
-                _state.update { it.copy(
-                    fromText = event.text
-                ) }.also {
-                    println("Updated _State: ${_state.value.fromText}")
-                    println("Updated State: ${state.value.fromText}")
+                _state.update {
+                    it.copy(
+                        fromText = event.text
+                    )
                 }
             }
             is TranslateEvent.ChooseFromLanguage -> {
@@ -107,19 +77,18 @@ class TranslateViewModel(
                 _state.update { it.copy(error = null) }
             }
             TranslateEvent.OpenFromLanguageDropDown -> {
-                _state.update { it.copy(
-                    isChoosingFromLanguage = true
-                ) }.also {
-                    println("Updated _State: ${_state.value.isChoosingFromLanguage}")
-                    println("Updated State: ${state.value.isChoosingFromLanguage}")
+                _state.update {
+                    it.copy(
+                        isChoosingFromLanguage = true
+                    )
                 }
             }
+
             TranslateEvent.OpenToLanguageDropDown -> {
-                _state.update { it.copy(
-                    isChoosingToLanguage = true
-                ) }.also {
-                    println("Updated _State: ${_state.value.isChoosingToLanguage}")
-                    println("Updated State: ${state.value.isChoosingToLanguage}")
+                _state.update {
+                    it.copy(
+                        isChoosingToLanguage = true
+                    )
                 }
             }
             is TranslateEvent.SelectHistoryItem -> {
@@ -158,7 +127,8 @@ class TranslateViewModel(
             TranslateEvent.Translate -> {
                 translate(state.value)
 
-                viewModelScope.launch {
+                historyListJob?.cancel()
+                historyListJob = viewModelScope.launch {
                     val historyFlow = historyDataSource.getHistory().map { itemList ->
                         itemList.mapNotNull { item ->
                             UiHistoryItem(

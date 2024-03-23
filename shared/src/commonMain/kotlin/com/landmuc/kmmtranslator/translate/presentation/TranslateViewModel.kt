@@ -12,7 +12,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
@@ -26,35 +30,38 @@ class TranslateViewModel(
     private val viewModelScope = coroutineScope ?: CoroutineScope(Dispatchers.Main)
 
     private val _state = MutableStateFlow(TranslateState())
-    lateinit var state: StateFlow<TranslateState>
-        private set
+    val state = _state.asStateFlow().toCommonStateFlow()
 
-    init {
-        viewModelScope.launch {
-            state = combine(
-                _state,
-                historyDataSource.getHistory()
-            ) { state, history ->
-                if (state.history != history) {
-                    state.copy(
-                        history = history.mapNotNull { item ->
-                            UiHistoryItem(
-                                id = item.id ?: return@mapNotNull null,
-                                fromText = item.fromText,
-                                toText =  item.toText,
-                                fromLanguage = UiLanguage.byCode(item.fromLanguageCode),
-                                toLanguage = UiLanguage.byCode(item.toLanguageCode)
-                            )
-                        }
-                    )
-                } else state
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = TranslateState()
-            ).toCommonStateFlow()
-        }
-    }
+
+//    lateinit var stateTest: StateFlow<TranslateState>
+//        private set
+//
+//    init {
+//        viewModelScope.launch {
+//            stateTest = combine(
+//                _state,
+//                historyDataSource.getHistory()
+//            ) { state, history ->
+//                if (state.history != history) {
+//                    state.copy(
+//                        history = history.mapNotNull { item ->
+//                            UiHistoryItem(
+//                                id = item.id ?: return@mapNotNull null,
+//                                fromText = item.fromText,
+//                                toText =  item.toText,
+//                                fromLanguage = UiLanguage.byCode(item.fromLanguageCode),
+//                                toLanguage = UiLanguage.byCode(item.toLanguageCode)
+//                            )
+//                        }
+//                    )
+//                } else state
+//            }.stateIn(
+//                scope = viewModelScope,
+//                started = SharingStarted.WhileSubscribed(5000),
+//                initialValue = TranslateState()
+//            ).toCommonStateFlow()
+//        }
+//    }
 
     private var translateJob: Job? = null
 
@@ -63,7 +70,10 @@ class TranslateViewModel(
             is TranslateEvent.ChangeTranslationText -> {
                 _state.update { it.copy(
                     fromText = event.text
-                ) }
+                ) }.also {
+                    println("Updated _State: ${_state.value.fromText}")
+                    println("Updated State: ${state.value.fromText}")
+                }
             }
             is TranslateEvent.ChooseFromLanguage -> {
                 _state.update { it.copy(
@@ -99,12 +109,18 @@ class TranslateViewModel(
             TranslateEvent.OpenFromLanguageDropDown -> {
                 _state.update { it.copy(
                     isChoosingFromLanguage = true
-                ) }
+                ) }.also {
+                    println("Updated _State: ${_state.value.isChoosingFromLanguage}")
+                    println("Updated State: ${state.value.isChoosingFromLanguage}")
+                }
             }
             TranslateEvent.OpenToLanguageDropDown -> {
                 _state.update { it.copy(
                     isChoosingToLanguage = true
-                ) }
+                ) }.also {
+                    println("Updated _State: ${_state.value.isChoosingToLanguage}")
+                    println("Updated State: ${state.value.isChoosingToLanguage}")
+                }
             }
             is TranslateEvent.SelectHistoryItem -> {
                 // not canceling would update the _state with the result of the translate function
@@ -139,7 +155,26 @@ class TranslateViewModel(
                     toText = if(it.toText != null) it.fromText else null
                 ) }
             }
-            TranslateEvent.Translate -> translate(state.value)
+            TranslateEvent.Translate -> {
+                translate(state.value)
+
+                viewModelScope.launch {
+                    val historyFlow = historyDataSource.getHistory().map { itemList ->
+                        itemList.mapNotNull { item ->
+                            UiHistoryItem(
+                                id = item.id ?: return@mapNotNull null,
+                                fromText = item.fromText,
+                                toText =  item.toText,
+                                fromLanguage = UiLanguage.byCode(item.fromLanguageCode),
+                                toLanguage = UiLanguage.byCode(item.toLanguageCode)
+                            )
+                        }
+                    }
+                    val latestHistoryList = historyFlow.first()
+                    _state.update { it.copy(history = latestHistoryList) }
+
+                }
+            }
             else -> Unit
         }
     }

@@ -74,6 +74,10 @@ fun TranslateScreen(
                         }
                     )
                 }
+                OutlinedTextField(
+                    value = state.fromText,
+                    onValueChange = { onEvent(TranslateEvent.ChangeTranslationText(it))}
+                )
             }
         }
     }

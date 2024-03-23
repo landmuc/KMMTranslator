@@ -1,5 +1,6 @@
 package com.landmuc.kmmtranslator.android.translate.presentation
 
+import android.speech.tts.TextToSpeech
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -23,8 +24,10 @@ import com.landmuc.kmmtranslator.android.R
 import com.landmuc.kmmtranslator.android.translate.presentation.components.LanguageDropDown
 import com.landmuc.kmmtranslator.android.translate.presentation.components.SwapLanguagesButton
 import com.landmuc.kmmtranslator.android.translate.presentation.components.TranslateTextField
+import com.landmuc.kmmtranslator.android.translate.presentation.components.rememberTextToSpeech
 import com.landmuc.kmmtranslator.translate.presentation.TranslateEvent
 import com.landmuc.kmmtranslator.translate.presentation.TranslateState
+import java.util.Locale
 
 @Composable
 fun TranslateScreen(
@@ -87,6 +90,8 @@ fun TranslateScreen(
            item {
                val clipboardManager = LocalClipboardManager.current
                val keyboardController = LocalSoftwareKeyboardController.current
+               val tts = rememberTextToSpeech()
+
                TranslateTextField(
                    fromText = state.fromText,
                    toText = state.toText,
@@ -96,23 +101,31 @@ fun TranslateScreen(
                    onTranslateClick = {
                        keyboardController?.hide()
                        onEvent(TranslateEvent.Translate)
-                                      },
+                   },
                    onTextChange = { onEvent(TranslateEvent.ChangeTranslationText(it)) },
-                   onCopyClick = {text ->
-                                 clipboardManager.setText(
-                                     buildAnnotatedString { append(text) }
-                                 )
+                   onCopyClick = { text ->
+                       clipboardManager.setText(
+                           buildAnnotatedString { append(text) }
+                       )
                        Toast.makeText(
                            context,
                            context.getString(R.string.copied_to_clipboard),
                            Toast.LENGTH_LONG
-                           ).show()
+                       ).show()
                    },
                    onCloseClick = { onEvent(TranslateEvent.CloseTranslation) },
-                   onSpeakerClick = { /*TODO*/},
+                   onSpeakerClick = {
+                       tts.language = state.toLanguage.toLocale() ?: Locale.ENGLISH
+                       tts.speak(
+                           state.toText,
+                           TextToSpeech.QUEUE_FLUSH,
+                           null,
+                           null
+                       )
+                   },
                    onTextFieldClick = { onEvent(TranslateEvent.EditTranslation) },
                    modifier = Modifier.fillMaxWidth()
-                   )
+               )
            }
         }
     }

@@ -27,11 +27,11 @@ class TranslateViewModel(
     private val viewModelScope = coroutineScope ?: CoroutineScope(Dispatchers.Main)
 
     private val _state = MutableStateFlow(TranslateState())
-    val state = _state.asStateFlow().toCommonStateFlow().stateIn(
+    val state = _state.asStateFlow().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = TranslateState()
-    )
+    ).toCommonStateFlow()
 
     private var translateJob: Job? = null
     private var historyListJob: Job? = null

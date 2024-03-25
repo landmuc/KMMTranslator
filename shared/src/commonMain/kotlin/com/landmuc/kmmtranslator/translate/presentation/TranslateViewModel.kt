@@ -33,8 +33,22 @@ class TranslateViewModel(
         initialValue = TranslateState()
     ).toCommonStateFlow()
 
+    private val historyJob = viewModelScope.launch {
+        historyDataSource.getHistory().collect { itemList ->
+            val uiHistoryList = itemList.mapNotNull { item ->
+                UiHistoryItem(
+                    id = item.id ?: return@mapNotNull null,
+                    fromText = item.fromText,
+                    toText =  item.toText,
+                    fromLanguage = UiLanguage.byCode(item.fromLanguageCode),
+                    toLanguage = UiLanguage.byCode(item.toLanguageCode)
+                )
+            }
+            _state.update { it.copy(history = uiHistoryList) }
+        }
+    }
+
     private var translateJob: Job? = null
-    private var historyListJob: Job? = null
 
     fun onEvent(event: TranslateEvent) {
         when(event) {
@@ -126,24 +140,6 @@ class TranslateViewModel(
             }
             TranslateEvent.Translate -> {
                 translate(state.value)
-
-                historyListJob?.cancel()
-                historyListJob = viewModelScope.launch {
-                    val historyFlow = historyDataSource.getHistory().map { itemList ->
-                        itemList.mapNotNull { item ->
-                            UiHistoryItem(
-                                id = item.id ?: return@mapNotNull null,
-                                fromText = item.fromText,
-                                toText =  item.toText,
-                                fromLanguage = UiLanguage.byCode(item.fromLanguageCode),
-                                toLanguage = UiLanguage.byCode(item.toLanguageCode)
-                            )
-                        }
-                    }
-                    val latestHistoryList = historyFlow.first()
-                    _state.update { it.copy(history = latestHistoryList) }
-
-                }
             }
             else -> Unit
         }

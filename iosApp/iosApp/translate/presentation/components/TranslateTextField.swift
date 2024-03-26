@@ -11,7 +11,6 @@ import shared
 import UniformTypeIdentifiers
 
 struct TranslateTextField: View {
-    // @Binding same functionality like onValueChanged in Compose
     @Binding var fromText: String
     let toText: String?
     let isTranslating: Bool
@@ -53,7 +52,7 @@ struct TranslateTextField_Previews: PreviewProvider {
                 get: { "test" },
                 set: { value in }
             ),
-            toText: "Test",
+            toText: nil,
             isTranslating: false,
             fromLanguage: UiLanguage(language: .english, imageName: "english"),
             toLanguage: UiLanguage(language: .german, imageName: "german"),
@@ -66,7 +65,6 @@ private extension TranslateTextField {
     
     struct IdleTextField: View {
         @Binding var fromText: String
-        // let is the equivalent to val in Kotlin
         let isTranslating: Bool
         let onTranslateEvent: (TranslateEvent) -> Void
         
@@ -90,10 +88,7 @@ private extension TranslateTextField {
                     .padding(.trailing)
                     .padding(.bottom)
                 }
-            // make background of texteditor transparent
-                .onAppear {
-                    UITextView.appearance().backgroundColor = .clear
-                }
+                .scrollContentBackground(Visibility.hidden)
         }
     }
     

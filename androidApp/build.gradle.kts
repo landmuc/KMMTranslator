@@ -62,6 +62,14 @@ dependencies {
 
     implementation(libs.ktor.client.android)
 
+    //testing
+    androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation(libs.hilt.android.testing)
+
 }
 
 kapt {

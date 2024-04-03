@@ -16,6 +16,14 @@ navigationCompose = "2.7.7"
 sqldelight = "2.0.1"
 hiltAndroid = "2.49"
 
+assertk = "0.28.0"
+hiltAndroidTesting = "2.50"
+junit = "4.13.2"
+rules = "1.5.0"
+runner = "1.5.2"
+turbine = "1.1.0"
+uiTestJunit4 = "1.6.4"
+
 
 [libraries]
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
@@ -48,6 +56,15 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltA
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltCompiler" }
+
+androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
+androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
+androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "uiTestJunit4" }
+androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestJunit4" }
+assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assertk" }
+hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroidTesting" }
+junit = { module = "junit:junit", version.ref = "junit" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 
 [plugins]

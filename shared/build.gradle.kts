@@ -34,6 +34,7 @@ kotlin {
         commonMain.dependencies {
             //put your multiplatform dependencies here
             implementation(libs.kotlinx.serialization)
+            implementation(libs.kotlinx.coroutines)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.serialization)
@@ -44,7 +45,7 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.assertk)
-            //implementation(libs.turbine)
+            implementation(libs.turbine)
         }
 
         androidMain.dependencies {

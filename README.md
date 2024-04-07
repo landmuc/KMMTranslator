@@ -28,7 +28,7 @@ KMMTranslator shares crucial business logic between Android and IOS like models,
 
 ## Screenshots
 
-<img alt="android1.png" height="400" src="Screenshots/android1.png.png" width="180"/>  <img alt="android2.png" height="400" src="Screenshots/android2.png" width="180"/>  <img alt="android3.png" height="400" src="Screenshots/android3.png" width="180"/>
+<img alt="android1.png" height="400" src="Screenshots/android1.png" width="180"/>  <img alt="android2.png" height="400" src="Screenshots/android2.png" width="180"/>  <img alt="android3.png" height="400" src="Screenshots/android3.png" width="180"/>
 
 <img alt="ios1.png" height="400" src="Screenshots/ios1.png" width="180"/>  <img alt="ios2.png" height="400" src="Screenshots/ios2.png" width="180"/> <img alt="ios3.png" height="400" src="Screenshots/ios3.png" width="180"/>
 

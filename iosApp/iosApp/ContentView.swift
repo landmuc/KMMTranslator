@@ -3,7 +3,7 @@ import shared
 
 struct ContentView: View {
     
-    private let appModule = AppModule()
+    let appModule: AppModule
     
 	var body: some View {
         ZStack {
@@ -12,13 +12,10 @@ struct ContentView: View {
             
             TranslateScreen(
                 historyDataSource: appModule.historyDataSource,
-                translateUseCase: appModule.translateUseCase)
+                translateUseCase: appModule.translateUseCase,
+                parser: appModule.voiceParser
+            )
+        
         }
-	}
-}
-
-struct ContentView_Previews: PreviewProvider {
-	static var previews: some View {
-		ContentView()
 	}
 }

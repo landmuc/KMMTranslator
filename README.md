@@ -1,6 +1,6 @@
 # KMMTranslator - Android and IOS Translator App
 
-Disclaimer: This app was developed purely for learning purposes.
+Disclaimer: This app was purely developed for learning purposes.
 
 ## Overview
 **KMMTranslator** is a translator app for Android and IOS build with Kotlin Multiplatform (Mobile) technology.
